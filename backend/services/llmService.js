@@ -1,21 +1,28 @@
 const https = require('https');
 
-async function callClaude(prompt) {
+// Groq uses an OpenAI-compatible chat completions API.
+// Free models available: "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+
+async function callGroq(prompt) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model: GROQ_MODEL,
+      messages: [
+        { role: 'system', content: 'You are a clinical assistant. Always respond with ONLY valid JSON, no markdown formatting, no code fences, no explanation text before or after the JSON.' },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.3,
       max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
     });
 
     const req = https.request({
-      hostname: 'api.anthropic.com',
-      path: '/v1/messages',
+      hostname: 'api.groq.com',
+      path: '/openai/v1/chat/completions',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
         'Content-Length': Buffer.byteLength(body),
       },
     }, (res) => {
@@ -24,10 +31,10 @@ async function callClaude(prompt) {
       res.on('end', () => {
         try {
           const parsed = JSON.parse(data);
-          if (parsed.content && parsed.content[0]) {
-            resolve(parsed.content[0].text);
+          if (parsed.choices && parsed.choices[0]?.message?.content) {
+            resolve(parsed.choices[0].message.content);
           } else {
-            reject(new Error('No content in response'));
+            reject(new Error(parsed.error?.message || 'No content in Groq response'));
           }
         } catch (e) {
           reject(e);
@@ -52,7 +59,7 @@ Respond ONLY with valid JSON, no markdown, no explanation.
 Symptoms: ${symptoms}`;
 
   try {
-    const response = await callClaude(prompt);
+    const response = await callGroq(prompt);
     const clean = response.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     return {
@@ -85,7 +92,7 @@ Respond ONLY with valid JSON, no markdown.
 Clinical notes: ${notes}`;
 
   try {
-    const response = await callClaude(prompt);
+    const response = await callGroq(prompt);
     const clean = response.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     return {
