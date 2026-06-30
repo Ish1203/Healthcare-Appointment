@@ -13,6 +13,13 @@ app.use(express.json());
 // Initialize DB
 require('./db/database');
 
+// Auto-seed demo accounts if the database is empty (safe to run every boot —
+// it checks for existing data first and skips if already seeded). This lets
+// hosts without Shell access, like Render's free tier, get demo data without
+// any manual step.
+const seed = require('./seed');
+seed().catch(err => console.error('Seed error:', err.message));
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/doctors', require('./routes/doctors'));

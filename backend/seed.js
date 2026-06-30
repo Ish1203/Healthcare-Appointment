@@ -1,17 +1,19 @@
-// Seed script - creates demo accounts (admin, doctor, patient) for quick testing
-require('dotenv').config();
+// Seed script - creates demo accounts (admin, doctor, patient) for quick testing.
+// Exports `seed()` so server.js can call it automatically on boot (useful for
+// hosts like Render's free tier that don't provide Shell access). Still runs
+// standalone via `node seed.js` for local use.
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('./db/database');
 
 async function seed() {
-  console.log('🌱 Seeding database...');
-
   const existingAdmin = db.prepare("SELECT id FROM users WHERE email = ?").get('admin@medibook.com');
   if (existingAdmin) {
     console.log('⚠️  Demo data already exists. Skipping seed.');
-    process.exit(0);
+    return false;
   }
+
+  console.log('🌱 Seeding database...');
 
   const hashedAdmin = await bcrypt.hash('admin123', 10);
   const hashedDoctor = await bcrypt.hash('doctor123', 10);
@@ -54,7 +56,15 @@ async function seed() {
   console.log('  Doctor:  doctor@medibook.com  / doctor123  (Dr. Sarah Johnson - Cardiology)');
   console.log('  Doctor:  raj.mehta@medibook.com / doctor123 (Dr. Raj Mehta - General Medicine)');
   console.log('  Patient: patient@medibook.com / patient123');
-  process.exit(0);
+  return true;
 }
 
-seed().catch(err => { console.error(err); process.exit(1); });
+// Run standalone: `node seed.js`
+if (require.main === module) {
+  require('dotenv').config();
+  seed()
+    .then(() => process.exit(0))
+    .catch(err => { console.error(err); process.exit(1); });
+}
+
+module.exports = seed;
