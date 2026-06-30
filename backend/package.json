@@ -15,7 +15,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.7",
     "node-cron": "^3.0.3",
-    "better-sqlite3": "^9.4.3",
+    "node-sqlite3-wasm": "^0.8.0",
     "uuid": "^9.0.0",
     "googleapis": "^128.0.0",
     "express-validator": "^7.0.1"

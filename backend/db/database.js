@@ -1,4 +1,4 @@
-const Database = require('better-sqlite3');
+const { Database } = require('node-sqlite3-wasm');
 const path = require('path');
 const fs = require('fs');
 
@@ -6,10 +6,47 @@ const DB_PATH = process.env.DB_PATH || './db/healthcare.db';
 const dbDir = path.dirname(DB_PATH);
 if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
 
-const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+const rawDb = new Database(DB_PATH);
+rawDb.exec('PRAGMA foreign_keys = ON');
 
+// --- better-sqlite3-compatible shim --------------------------------------
+// Routes throughout this app use the better-sqlite3 style:
+//   db.prepare(sql).run(...args)
+//   db.prepare(sql).get(...args)
+//   db.prepare(sql).all(...args)
+//   db.transaction(fn)()
+// node-sqlite3-wasm exposes db.run(sql, values), db.get(sql, values), db.all(sql, values)
+// instead, so this shim adapts the call shape without touching any route file.
+
+function prepare(sql) {
+  return {
+    run: (...args) => rawDb.run(sql, args),
+    get: (...args) => rawDb.get(sql, args),
+    all: (...args) => rawDb.all(sql, args),
+  };
+}
+
+function transaction(fn) {
+  return (...args) => {
+    rawDb.exec('BEGIN');
+    try {
+      const result = fn(...args);
+      rawDb.exec('COMMIT');
+      return result;
+    } catch (err) {
+      rawDb.exec('ROLLBACK');
+      throw err;
+    }
+  };
+}
+
+function pragma(stmt) {
+  rawDb.exec(`PRAGMA ${stmt}`);
+}
+
+const db = { prepare, transaction, pragma, exec: (sql) => rawDb.exec(sql) };
+
+// --- Schema ---------------------------------------------------------------
 function initDB() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
