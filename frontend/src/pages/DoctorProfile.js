@@ -59,7 +59,18 @@ export default function DoctorProfile() {
   const connectGoogle = async () => {
     try {
       const { data } = await api.get('/calendar/auth-url');
-      window.open(data.url, '_blank', 'width=500,height=600');
+      const popup = window.open(data.url, '_blank', 'width=500,height=600');
+      // Poll until the OAuth popup closes, then refresh connection status automatically
+      // instead of requiring the user to manually reload the page.
+      const poll = setInterval(() => {
+        if (popup && popup.closed) {
+          clearInterval(poll);
+          api.get('/auth/me').then(r => {
+            setGoogleConnected(r.data.google_connected);
+            if (r.data.google_connected) toast.success('Google Calendar connected!');
+          });
+        }
+      }, 1000);
     } catch (err) { toast.error(err.response?.data?.error || 'Google Calendar not configured'); }
   };
 
