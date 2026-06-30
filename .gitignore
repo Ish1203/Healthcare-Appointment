@@ -1,0 +1,10 @@
+node_modules/
+build/
+.env
+.env.local
+*.log
+.DS_Store
+backend/db/*.db
+backend/db/*.db-journal
+backend/db/*.db-wal
+backend/db/*.db-shm
