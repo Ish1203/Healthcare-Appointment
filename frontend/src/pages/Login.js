@@ -60,9 +60,9 @@ export default function Login() {
           <div style={{ marginTop: 24, padding: 16, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
             <p style={{ fontSize: 12, fontWeight: 600, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Demo Accounts</p>
             {[
-              { role: 'Admin', email: 'admin@medibook.com', pass: 'admin123' },
-              { role: 'Doctor', email: 'doctor@medibook.com', pass: 'doctor123' },
-              { role: 'Patient', email: 'patient@medibook.com', pass: 'patient123' },
+              { role: 'Admin (Arjun Sharma)', email: 'admin@medibook.com', pass: 'admin123' },
+              { role: 'Doctor (Dr. Priya Nair)', email: 'doctor@medibook.com', pass: 'doctor123' },
+              { role: 'Patient (Rahul Verma)', email: 'patient@medibook.com', pass: 'patient123' },
             ].map(({ role, email, pass }) => (
               <button key={role} onClick={() => setForm({ email, password: pass })} style={{
                 display: 'block', width: '100%', textAlign: 'left', padding: '6px 0', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#0ea5e9', fontWeight: 500
