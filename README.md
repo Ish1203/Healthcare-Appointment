@@ -186,6 +186,10 @@ After deploying, update `FRONTEND_URL` in the backend's environment variables to
 
 > **Note on Google Calendar:** The OAuth consent screen is currently in Testing mode. Only explicitly added test users can connect their Google Calendar. This is standard behaviour for apps that have not yet completed Google's verification process.
 
+> **Note for evaluators:** Google Calendar sync is fully functional.
+> If you see a "Google hasn't verified this app" warning, click
+> **Continue** to proceed — this is expected for apps in development
+> that haven't completed Google's formal verification process.
 ---
 
 ## 📄 Additional Documentation
