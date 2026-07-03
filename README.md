@@ -40,16 +40,16 @@ healthcare-app/
 ├── backend/
 │   ├── db/             # database schema and connection
 │   ├── middleware/      # auth middleware
-│   ├── routes/           # API endpoints
-│   ├── services/         # email, AI, calendar, background jobs
-│   ├── seed.js            # demo data
+│   ├── routes/          # API endpoints
+│   ├── services/        # email, AI, calendar, background jobs
+│   ├── seed.js          # demo data
 │   └── server.js
 ├── frontend/
 │   └── src/
-│       ├── pages/         # all screens
-│       ├── components/     # shared UI (layout, etc.)
-│       ├── context/        # auth state
-│       └── utils/          # API client
+│       ├── pages/       # all screens
+│       ├── components/  # shared UI (layout, etc.)
+│       ├── context/     # auth state
+│       └── utils/       # API client
 ├── SYSTEM_DESIGN.md
 └── README.md
 ```
@@ -98,12 +98,11 @@ GOOGLE_REDIRECT_URI=http://localhost:5000/api/calendar/callback
 FRONTEND_URL=http://localhost:3000
 ```
 
-Seed demo accounts and start the server:
+Start the server (demo accounts are seeded automatically on first boot):
 ```bash
-node seed.js
 npm run dev
 ```
-The API runs at `http://localhost:5000`. Visiting `/` directly will show "Cannot GET /" — that's expected, since it's an API-only server. Check `http://localhost:5000/api/health` to confirm it's running.
+The API runs at `http://localhost:5000`. Visiting `/` directly will show "Cannot GET /" — that's expected since it's an API-only server. Check `http://localhost:5000/api/health` to confirm it's running.
 
 ### 3. Frontend setup
 In a new terminal:
@@ -117,12 +116,17 @@ The app opens at `http://localhost:3000` and talks to the backend automatically 
 ### 4. Try it out
 Demo accounts (also shown on the login screen):
 
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@medibook.com | admin123 |
-| Doctor | doctor@medibook.com | doctor123 |
-| Doctor 2 | raj.mehta@medibook.com | doctor123 |
-| Patient | patient@medibook.com | patient123 |
+| Role | Name | Email | Password |
+|---|---|---|---|
+| Admin | Arjun Sharma | admin@medibook.com | admin123 |
+| Doctor | Dr. Priya Nair (Cardiology) | doctor@medibook.com | doctor123 |
+| Doctor | Dr. Anil Kulkarni (General Medicine) | anil.kulkarni@medibook.com | doctor123 |
+| Doctor | Dr. Sunita Reddy (Pediatrics) | sunita.reddy@medibook.com | doctor123 |
+| Doctor | Dr. Vikram Mehta (Dermatology) | vikram.mehta@medibook.com | doctor123 |
+| Doctor | Dr. Kavitha Iyer (Orthopedics) | kavitha.iyer@medibook.com | doctor123 |
+| Patient | Rahul Verma | patient@medibook.com | patient123 |
+| Patient | Neha Gupta | neha.gupta@medibook.com | patient123 |
+| Patient | Rohan Joshi | rohan.joshi@medibook.com | patient123 |
 
 ---
 
@@ -135,7 +139,7 @@ Demo accounts (also shown on the login screen):
 **Gmail App Password (for sending emails)**
 1. Enable 2-Step Verification on your Google Account
 2. Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
-3. Generate a password for "Mail" and use the 16-character code as `EMAIL_PASS` (not your normal password)
+3. Generate a password for "Mail" and use the 16-character code as `EMAIL_PASS` (not your normal Gmail password)
 
 **Google Calendar OAuth (optional)**
 1. Create a project at [Google Cloud Console](https://console.cloud.google.com)
@@ -173,12 +177,14 @@ Demo accounts (also shown on the login screen):
 - Build command: `npm install`
 - Start command: `npm start`
 - Add all environment variables from your `.env`
-- Run `node seed.js` once via the host's shell to seed demo data
+- Demo accounts are seeded automatically on first boot — no manual step needed
 
-**Frontend** — deploy the `frontend/` folder to [Vercel](https://vercel.com) or [Netlify](https://netlify.com):
+**Frontend** — deploy the `frontend/` folder to [Vercel](https://vercel.com):
 - Set environment variable `REACT_APP_API_URL` to your deployed backend URL + `/api`
 
 After deploying, update `FRONTEND_URL` in the backend's environment variables to your live frontend URL, and (if using Calendar) add the production redirect URI in Google Cloud Console.
+
+> **Note on Google Calendar:** The OAuth consent screen is currently in Testing mode. Only explicitly added test users can connect their Google Calendar. This is standard behaviour for apps that have not yet completed Google's verification process.
 
 ---
 
