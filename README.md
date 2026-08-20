@@ -197,7 +197,3 @@ After deploying, update `FRONTEND_URL` in the backend's environment variables to
 See [SYSTEM_DESIGN.md](./SYSTEM_DESIGN.md) for the technical write-up covering double-booking prevention, doctor leave conflict handling, the slot hold mechanism, and notification failure handling.
 
 ---
-
-## 📜 License
-
-This project was built as part of a technical assignment and is provided as-is for evaluation purposes.
